@@ -1,0 +1,26 @@
+module testcomparator (
+
+    input alufn[2],
+    input z,
+    input v,
+    input n,
+    output out[8]
+  ) {
+    sig lessthan;
+    sig lessequal;
+    
+  always {
+    lessthan=n^v;
+    lessequal=z|(n^v);
+    case(alufn){
+      2b01:
+        out=c{7b0,z};
+      2b10:
+        out=c{7b0,lessthan};
+      2b11:
+        out=c{7b0,lessequal};
+      default:
+        out=c{8b0};
+      }
+    }
+}

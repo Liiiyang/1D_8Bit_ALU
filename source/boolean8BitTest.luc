@@ -10,9 +10,8 @@ module boolean8BitTest (
       dff counter[30](.clk(clk), . rst(rst)); 
       //counter to change the test case currently running
       // counter has 30bits to provide time for circuit to change cases
-      const DELAY = 28; // use to control the time before it transits to the next state
+      const DELAY = 25; // use to control the time before it transits to the next state
       sig cases[4]; //to initialise signal cases to oly take uptill 4 bits
-      sig out[8]; //8bit output of boolean operation
         
       boole8Bit boole; //to import the bool8bit module for testing
       
@@ -37,31 +36,23 @@ module boolean8BitTest (
           	boole.a = 8b01001001;
           	boole.b = 8b01111101;
           display=8b1000;
-           out = boole.boole;
-           if(counter.q[DELAY]==1 && out!=8b1001001){
+           if(counter.q[DELAY]==1){
+            if(boole.boole!=8b1001001){
              //io_led[0] = 8b1000;
-             error = 1;
-             //go to error state
-           }
-           else if(counter.q[DELAY]==1 && out==8b1001001){
-             
-             error=0;
-             //continue to next case
+             error = 1;  //go to error state
             }
+           }
          
            4b1110: //test case for or operation
            display=8b1110;
            io_led[0] = 8b1110;
            boole.a = 8b10001000;
            boole.b = 8b01001001;
-           out = boole.boole;
-           if(counter.q[DELAY]==1 && out!=8b11001001){
+           if(counter.q[DELAY]==1){
+            if(boole.boole!=8b11001001){
               error=1;
               //go to error state
-            }
-            else if(counter.q[DELAY] ==1 && out== 8b11001001){
-               error=0;
-               //continue to next state
+              }
             }
       
            4b0110: //test case for xor operation
@@ -69,126 +60,101 @@ module boolean8BitTest (
           io_led[0] = 8b0110;
           	boole.a = 8b10110101;
           	boole.b = 8b10111101;
-           out = boole.boole;
-            if(counter.q[DELAY]==1 && out!=8b00001000){
-              error=1;
+            if(counter.q[DELAY]==1){
+              if(boole.boole!=8b00001000){
+                error=1;
+              }
             }
-            else if(counter.q[DELAY]==1 && out==8b00001000){
-               error=0;
-               //continue to next testcase
-            }
-              
-              
             4b1010: //test case for 'A' operation
             display=8b1010;
             io_led[0] = 8b1010;
           	 boole.a = 8b00001111;
           	 boole.b = 8b11111100;
-            out = boole.boole;
-             if(counter.q[DELAY]==1 && out!=8b00001111){
+             if(counter.q[DELAY]==1){
+              if(boole.boole!=8b00001111){
                 error=1;
                 //go to error state
+              }
              }
-             else if(counter.q[DELAY]==1 && out==8b00001111){
-                error=0;
-                  //continue to next test case
-             }
-        	
         	   4b1100: //test case for 'B' operation
             display=8b1100; 
             io_led[0] = 8b1100;
         		  boole.a = 8b01010010;
         		  boole.b = 8b10100101;
-              out = boole.boole;
-              if(counter.q[DELAY]==1 && out!=8b10100101){
+              if(counter.q[DELAY]==1){
+                if(boole.boole!=8b10100101){
                  error=1;
               //go to error state
+                }
               }
-              else if(counter.q[DELAY]==1 && out==8b10100101){
-                error=0;
-                //continue to next test case
-               }
-        		
         	    4b0101: //test case for 'Not A' operation
               display=8b0101;
               io_led[0] = 8b0101;
         		   boole.a = 8b11010111;
         		   boole.b = 8b01111101;
-               out = boole.boole;
-               if(counter.q[DELAY]==1 && out!=8b00101000){
+               if(counter.q[DELAY]==1){
+                if(boole.boole!=8b00101000){
                  error=1;
               //go to error state
+                }
                }
-               else if(counter.q[DELAY]==1 && out==8b00101000){
-                  error=0;
-                //continue to next test case
-               }
-        
         	    4b0011: //test case for 'Not B' operation
              display=8b0011;
              io_led[0] = 8b0011;
         		   boole.a = 8b00110111;
         		   boole.b = 8b01101010;
-               out = boole.boole;
-               if(counter.q[DELAY]==1 && out!=8b10010101){
-                  error=1;
-              //go to error state
+               if(counter.q[DELAY]==1){
+                if(boole.boole!=8b10010101){
+                  error=1;   //go to error state
                }
-               else if(counter.q[DELAY]==1 && out==8b10010101){
-                  error=0;
-                //continue to next test case
-               }
-                
+              }
+
         	    4b0111: //test case for NAND gate operation
               display=8b0111;
               io_led[0] = 8b0111;
         		   boole.a = 8b11111010;
-        		   boole.b = 8b11011010;
-              out = boole.boole;    
-              if(counter.q[DELAY]==1 && out!=8b00100101){
+        		   boole.b = 8b11011010;   
+              if(counter.q[DELAY]==1){
+               if(boole.boole!=8b00100101){
                 error=1;
               //go to error state
+                }
               }
-              else if(counter.q[DELAY]==1 && out==8b00100101){
-                error=0;
-                //continue to next test case
-               }
-                
-                
         	    4b0001: //test case for NOR gate
               display=8b0001;
               io_led[0] = 8b0001;
         		   boole.a = 8b11110001;
         		   boole.b = 8b00001001;
-               out = boole.boole;
-               if(counter.q[DELAY]==1 && out!=8b00000110){
+               if(counter.q[DELAY]==1){
+                if(boole.boole!=8b00000110){
                   error=1;
               //go to error state
+                }
               }
-               else if(counter.q[DELAY]==1 && out==8b00000110){
-                  error=0;
-                //continue to next test case
-               }
-                
         	     4b1001: //test case for XNOR gate
               display=8b1001; 
               io_led[0] = 8b1001;
-        		    boole.a = 8b00011111;
-        		    boole.b = 8b11111100;
-               out = boole.boole;
-               if(counter.q[DELAY]==1 && out!=8b00011111){
-                  error=1;
-              //go to error state
+        		    boole.a = 8b01101101;
+        		    boole.b = 8b01100011;
+               if(counter.q[DELAY]==1){
+                if(boole.boole!=8b11110001){
+                  error=1;  //go to error state
+                  
+                }  
               }
-               else if(counter.q[DELAY]==1 && out==8b00011111){
-                  error=0;
-                  done = 1; //Indicates that all test cases have been completed
-                //go to the next state
+        
+              4b1111:
+              display = 8b1111;
+              if(counter.q[DELAY]==1){
+                done=1;
               }
-        	default:
-          display=8hFF;
-        		error = 2;
-        		done  = 0;
+                   // All test cases completed
+
+                   //Indicates that all test cases have been completed
+              	default:
+                display=8b0000;
+              		error = 0;
+              		done  = 0;
         	}
            }
         }

@@ -9,9 +9,8 @@ module adder8BitTest (
   ) {
   
   dff counter[30](.clk(clk),.rst(rst));
-  const DELAY = 28;
+  const DELAY = 25;
   sig cases[4]; // Initialises signal cases to only take up to 4 bits, i.e. have 16 test cases
-  sig out[8];
   
   // This imports the adder8 module for testing
   adder8Bit add;
@@ -20,11 +19,10 @@ module adder8BitTest (
  
     error = 0;
     done = 0;
-    out = add.s;
 
     add.a = 8b0; // Initialising input a to adder to be 8 bits
     add.b = 8b0; // Initialising input b to adder to be 8 bits
-    add.alufn = 1b0; // Initialising input alufn to adder to be 1 bit
+    add.alufn = 1b1; // Initialising input alufn to adder to be 1 bit
        
     cases = counter.q[29:26]; 
     counter.d = counter.q + 1; // This will increment the last bit of the counter.q by 1 every clk tick, allowing case to change
@@ -34,12 +32,10 @@ module adder8BitTest (
         add.b = 8b00000110;
         add.alufn = 1b0;
         display=8b0000;
-        out = (add.s == 8b00111100);
-        if(counter.q[DELAY]==1 && out!=8b00111100) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b00111100){
+            error = 1;
+          }
         }
 
       4b0001:                                               // 4 - 44 = -40
@@ -47,26 +43,20 @@ module adder8BitTest (
         add.b = 8b00101100;
         add.alufn = 1b1; // subtract
         display=8b0001;
-        out = (add.s == 8b11011000);
-        if(counter.q[DELAY]==1 && out!=8b11011000) {
-         error = 1;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b11011000){
+            error = 1;
+          }
         }
-        else {
-        error = 0;
-        }        
-
       4b0010:                                               // -8 + (-52) = -60
         add.a = 8b11111000; 
         add.b = 8b11001100; 
         add.alufn = 1b0;
         display=8b0010; 
-        out = (add.s == 8b11000100); 
-           
-        if(counter.q[DELAY]==1 && out!=8b11000100) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b11000100){
+           error = 1;
+          }
         }
 
       4b0011:                                               // -60 - (-5) = -55
@@ -74,12 +64,10 @@ module adder8BitTest (
         add.b = 8b11111011;
         add.alufn = 1b1;
         display=8b0011;
-        out = (add.s == 8b11001001);
-        if(counter.q[DELAY]==1 && out!=8b11001001) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b11001001){
+           error = 1;
+          }
         }
 
       4b0100:                                               // -54 + 60 = 6
@@ -87,12 +75,10 @@ module adder8BitTest (
         add.b = 8b00111100;
         add.alufn = 1b0;
         display=8b0100;
-        out = (add.s == 8b00000110);
-        if(counter.q[DELAY]==1 && out!=8b00000110) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b00000110){
+           error = 1;
+          }
         }
 
       4b0101:                                               // 127 + 127 = 254
@@ -100,12 +86,10 @@ module adder8BitTest (
         add.b = 8b01111111;
         add.alufn = 1b0;
         display=8b0101;
-        out = (add.s == 8b11111110);
-        if(counter.q[DELAY]==1 && out!=8b11111110) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1){
+          if(add.s!=8b11111110){
+             error = 1;
+          }
         }
 
       4b0110:                                               // -1 + (-1) = (-2)
@@ -113,25 +97,20 @@ module adder8BitTest (
         add.b = 8b11111111;
         add.alufn = 1b0;
         display=8b0110;
-        out = (add.s == 8b11111110);
-        if(counter.q[DELAY]==1 && out!=8b11111110) {
-        error = 1;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b11111110){
+           error = 1;
+          }
         }
-        else {
-        error = 0;
-        }
-
       4b0111:                                               // 0 - 0 = 0
         add.a = 8b00000000;
         add.b = 8b00000000;
         add.alufn = 1b1;
         display=8b0111;
-        out = (add.s == 8b00000000);
-        if(counter.q[DELAY]==1 && out!=8b00000000) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b00000000){
+           error = 1;
+          }
         }
 
       4b1000:                                               // -128 - (-128) = (-256)
@@ -139,23 +118,21 @@ module adder8BitTest (
         add.b = 8b10000000;
         add.alufn = 1b1;
         display=8b1000;
-        out = (add.s == 8b00000000);
-        if(counter.q[DELAY]==1 && out!=8b00000000) {
-        error = 1;
-        }
-        else {
-        error = 0;
+        if(counter.q[DELAY]==1) {
+          if(add.s!=8b00000000){
+           error = 1;
+          }
         }
 
       4b1001:
         display=8b1001;
-        out = 0;
-        error = 0;
-        done = 1;     // All test cases completed
+        if(counter.q[DELAY]==1){
+              done=1;
+            }   // All test cases completed
 
       default:
         display=8b1111;
-        error = 2;
+        error = 0;
         done = 0; 
     }
   }

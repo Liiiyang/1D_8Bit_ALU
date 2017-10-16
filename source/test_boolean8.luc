@@ -1,0 +1,95 @@
+module test_boolean8 (
+  input clk,
+  input rst,
+  output out, // to determine if the test cases pass or fails
+  output done, //to determine if the testing of bool is completed
+  output testcase_num[4] // to identify which test case is being carried out atm
+){
+
+dff counter[30](.clk(clk), . rst(rst)); 
+//counter to change the test case currently running
+// counter has 30bits to provide time for circuit to change cases
+
+sig cases[4]; //to initialise signal cases to oly take uptill 4 bits
+
+boole8bit boole; //to import the bool8bit module for testing
+
+always{
+  done=0;
+  out=2;
+  boole.a = 8b0; //initialise input a to boole to be 8bits
+  boole.b = 8b0; //initlialise input b to boole to be 8bits
+  cases = counter.q[29:26];  //read the 26th to 29th bit of the clk which is continuously changing
+  //cases will vary from 0000 to 1111 in binary since assigned testcase signals to take up till 4 bits
+  //from 0000 to 1111 -> we have 10 operations of boolean module 
+  boole.alufn = cases;
+  counter.d = counter.q + 1;
+
+    case(cases){
+	4b1000: //test case for and operation
+	boole.a = 8b01001001;
+	boole.b = 8b01111101;
+	out = (boole.out == 8b1001001);
+	test_num = 4b1000;
+
+4b1110: //test case for or operation
+	boole.a = 8b10001000;
+	boole.b = 8b01001001;
+	out = (boole.out == 8b11001001);
+	test_num = 4b1110;
+
+4b0110: //test case for xor operation
+	boole.a = 8b10110101;
+	boole.b = 8b10111101;
+	out = (boole.out == 8b00001000);
+	test_num = 4b0110;
+      
+  	4b1010: //test case for 'A' operation
+		boole.a = 8b00001111;
+		boole.b = 8b11111100;
+		out = (boole.out == 8b00001111);
+		test_num = 4b1010;
+	
+	4b1100: //test case for 'B' operation
+		boole.a = 8b01010010;
+		boole.b = 8b10100101;
+		out = (boole.out == 8b10100101);
+		test_num = 4b1100;
+		
+	4b0101: //test case for 'Not A' operation
+		boole.a = 8b11010111;
+		boole.b = 8b01111101;
+		out = (boole.out == 8b00101000);
+		test_num = 4b0101;
+
+	4b0011: //test case for 'Not B' operation
+		boole.a = 8b00110111;
+		boole.b = 8b01101010;
+		out =(boole.out == 8b10010101);
+		test_num = 4b0011;
+
+	4b0111: //test case for NAND gate operation
+		boole.a = 8b11111010;
+		boole.b = 8b11011010;
+		out = (boole.out == 8b00100101);
+		test_num = 4b0111;
+
+	4b0001: //test case for NOR gate
+		boole.a = 8b11110001;
+		boole.b = 8b00001001;
+		out = (boole.out == 8b00000110);
+		test_num = 4b0001;
+
+	4b1001: //test case for XNOR gate
+		boole.a = 8b00011111;
+		boole.b = 8b11111100;
+		out = (boole.out == 8b00011111);
+		test_num = 4b1001;
+		done = 1; //Indicates that all test cases have been completed
+
+	default:
+		out = 2;
+		test_num = 0;
+	}
+   }
+}

@@ -37,7 +37,7 @@ module alu8Bit (
     //multiplier8Bit
     mul.a = a;
     mul.b = b;
-    mul.alufn = alufn[1:0];
+    mul.alufn = alufn[0];
     
     //The output alu[8] will be dependent on the ALUFN[4] and ALUFN[5]
     case(alufn[5:4]){

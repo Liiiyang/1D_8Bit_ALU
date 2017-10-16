@@ -3,7 +3,8 @@ module shift8BitTest (
     input rst,  // reset
     output io_led[3][8], // all LEDs on the io shield
     output done, //to determine if the testing of bool is completed
-    output error //outputs 1 if theres an error and 0 when theres no error
+    output error, //outputs 1 if theres an error and 0 when theres no error
+    output display[8]
   ) {
   
   dff counter[30](.clk(clk), .rst(rst));
@@ -33,6 +34,7 @@ module shift8BitTest (
           shift.a = 8b00000001;
           shift.alufn = 2b00;
           out = (shift.shift == 8b00001000);
+          display=8b0000;
           if(counter.q[DELAY]==1 && out!=8b00001000){
             error = 1;
           }
@@ -45,6 +47,7 @@ module shift8BitTest (
           shift.a = 8b00010000;
           shift.alufn = 2b01;
           out = (shift.shift == 8b00000010);
+          display=8b0001;
           if(counter.q[DELAY]==1 && out!=8b00000010){
             error = 1;
           }
@@ -57,6 +60,7 @@ module shift8BitTest (
           shift.a = 8b11000000;
           shift.alufn = 2b11;
           out = (shift.shift == 8b11111000);
+          display=8b0000;
           if(counter.q[DELAY]==1 && out!=8b11111000){
             error = 1;
           }
@@ -69,8 +73,10 @@ module shift8BitTest (
           out = 0;
           error = 0;
           done = 1;
+          display=8b0011;
 
         default:
+          display=8b1111;
           error = 2;
           done = 0;
       }

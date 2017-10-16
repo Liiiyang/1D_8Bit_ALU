@@ -1,5 +1,4 @@
 // adder contains fault: subtract and addition are switched
-
 module faultyAdder (
     input a[8], // Input A 8 Bits
     input b[8], // Inout B 8 Bits
@@ -13,6 +12,7 @@ module faultyAdder (
   ) {
   sig xb[8];
   sig sum[8];
+  sig inv;
 
   always {
     inv = ~alufn;

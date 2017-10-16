@@ -1,18 +1,16 @@
 module multiplier8Bit (
     input a[8],
     input b[8],
-    input alufn[2],
+    input alufn,  // ALUFN[0]
     output mul[8]
   ) {
 
   always {
-  case(alufn){
-    2b10: //Mutiply when ALUFN[1] is 1 and ALUFN[0] is 0
-    mul[7:0] = a[7:0]*b[7:0];
-    2b11: //Divide when ALUFN[1] is 1 and ALUFN[0] is 1
-    mul[7:0] = a[7:0]/b[7:0];
-    default:
-    mul[7:0] = 8x{0};
+    if (~alufn) {
+      mul = a*b;
+    }
+    else {
+      mul = a/b;
+    }
   }
-}
 }

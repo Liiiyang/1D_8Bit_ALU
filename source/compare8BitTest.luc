@@ -66,7 +66,9 @@ module compare8BitTest (
         }
        3b100:
           display=8b100;
-          done = 1;
+          if(counter.q[25]==1){
+              done=1;
+            }
         default:
           display=8b111;
           done  = 0; 

@@ -1,0 +1,93 @@
+module finitestatemachine (
+    input clk,  // clock
+    input rst,  // reset
+    input io_button[5],
+    output test_no[4],
+    output io_seg[8], // 7 Segment LED 
+    output io_sel[4]
+    
+  ) {
+
+  .clk(clk) {
+    adder8BitTest add_results;
+    boolean8BitTest boole_results;
+    shift8BitTest shift_results;
+    compare8BitTest compare_results;      
+    .rst(rst) {
+    
+    multi_seven_seg seg;
+    
+    fsm state(#INIT(IDLE)) = {IDLE,ADD,BOOLE,SHIFT,COMPARE};  
+         
+    }
+}
+  
+  always {
+    add_results.rst = 0;
+    boole_results.rst = 0;
+    shift_results.rst = 0;
+    compare_results.rst = 0;
+        
+    state.d = state.q;
+    test_no = 0;
+    
+    seg.values = {5d10,5d10,5d10,5d10};
+    io_seg = ~seg.seg;
+    io_sel = ~seg.sel;   
+    
+    case (state.q) {
+      state.IDLE:
+        // Pressing the Center Button will start the state machine and begin testing
+        if (io_button[1] ==  1) {
+          add_results.rst = 1;
+          state.d = state.ADD;
+        }
+        
+      state.ADD:  
+        if (add_results.error == 1) {
+          seg.values = {5d11,5d14,5d14,5d10}; // Shows ADD to signify an error in ADD State
+          state.d = state.IDLE;
+        }
+        else if(add_results.done == 1 && add_results.error == 0){
+          seg.values = {5d12,5d20,5d20,5d18}; // Shows BOOL to signify the test cases for ADD is completed
+          boole_results.rst = 1;
+          state.d = state.BOOLE;
+        }
+        
+        test_no = add_results.test_no;                
+        
+      state.BOOLE:
+        if(boole_results.error == 1) {
+          seg.values = {5d12,5d20,5d20,5d18}; // Shows BOOL to signify an error in BOOLE State
+          state.d = state.IDLE;
+        }
+        else if(boole_results.done == 1 && add_results.error == 0) {
+          seg.values = {5d23,5d17,5d16,5d10}; // Shows SHF to signify the test cases for BOOLE is completed
+          shift_results.rst = 1;
+          state.d = state.SHIFT;
+        }
+
+      state.SHIFT:
+        if(shift_results.error == 1){
+          seg.values = {5d23,5d17,5d16,5d10}; // Shows SHF to signify an error in SHIFT State
+          state.d = state.IDLE;
+        }
+        else if(shift_results.done == 1 && shift_results.error == 0) {
+          seg.values = {5d13,5d21,5d10,5d10}; // Shows CP to signify the test cases for SHIFT is completed
+          state.d = state.COMPARE;
+        }
+        
+      state.COMPARE:
+        if(compare_results.error == 1) { 
+          seg.values = {5d13,5d21,5d10,5d10}; // Shows CP to signify an error in COMPARE State
+          state.d = state.IDLE;
+          state.d = state.IDLE;
+        }
+        else if (compare_results.done == 1 && compare_results.error == 0) {
+          seg.values = {5d14,5d20,5d19,5d15}; // Shows Done to signify the test is completed
+          state.d = state.IDLE;
+        }
+       
+  }
+}
+}

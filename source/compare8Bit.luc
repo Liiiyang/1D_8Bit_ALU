@@ -1,25 +1,25 @@
 module compare8Bit (
+    input alufn[2],
     input z,
     input v,
     input n,
-    input alufn[2], // ALUFN[1] and ALUFN[2] 
     output cmp[8]
-    
   ) {
-  sig lsb;
-
+    sig lessthan;
+    sig lessequal;
+    
   always {
-    case(alufn) {
+    lessthan=n^v;
+    lessequal=z|(n^v);
+    case(alufn){
       2b01:
-      lsb = z; // A=B
+        cmp=c{7b0,z};
       2b10:
-      lsb = n^v; //A<B
+        cmp=c{7b0,lessthan};
       2b11:
-      lsb = z|(n^v); // A<=B
+        cmp=c{7b0,lessequal};
       default:
-      lsb = b0;      
-  }
-    cmp[0] = lsb; // The Least Significant Bit is determined by the comparison
-    cmp[7:1] = 7b0; // The rest of the bits are 0 
-}
+        cmp=c{8b0};
+      }
+    }
 }

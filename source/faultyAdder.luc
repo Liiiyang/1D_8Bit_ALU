@@ -17,7 +17,7 @@ module faultyAdder (
   always {
     inv = ~alufn;
     xb = b ^ 8x{inv};
-    sum = a + xb + ~inv; // alufn will be 1 to do a subtraction
+    sum = a + xb + inv; // alufn will be 1 to do a subtraction
     z = ~|sum; // Using a Nor Gate to return true
     v = (a & b & ~sum) | (~a & ~b & sum); // Using formula of v to check for overflow as per Lab #3 P6
     n = sum[7]; // N returns true only if S7 = 1

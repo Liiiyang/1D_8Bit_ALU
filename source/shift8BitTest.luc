@@ -8,7 +8,7 @@ module shift8BitTest (
   ) {
   
   dff counter[30](.clk(clk), .rst(rst));
-  const DELAY = 28;
+  const DELAY = 25;
   sig cases[4];
   sig out[8];
   
@@ -33,51 +33,43 @@ module shift8BitTest (
         4b0000:
           shift.a = 8b00000001;
           shift.alufn = 2b00;
-          out = (shift.shift == 8b00001000);
           display=8b0000;
-          if(counter.q[DELAY]==1 && out!=8b00001000){
-            error = 1;
+          if(counter.q[DELAY]==1){
+            if(shift.shift!=8b00001000){
+             error = 1;
+            }
           }
-          else {
-            error = 0;
-          }
-
         //shifting right by 3 places when A is 16
         4b0001:
           shift.a = 8b00010000;
           shift.alufn = 2b01;
-          out = (shift.shift == 8b00000010);
           display=8b0001;
-          if(counter.q[DELAY]==1 && out!=8b00000010){
+          if(counter.q[DELAY]==1){
+           if(shift.shift!=8b00000010){
             error = 1;
           }
-          else {
-            error = 0;
           }
-
         //shifting right by 3 places with sign conservation
         4b0010:
           shift.a = 8b11000000;
           shift.alufn = 2b11;
           out = (shift.shift == 8b11111000);
-          display=8b0000;
-          if(counter.q[DELAY]==1 && out!=8b11111000){
+          display=8b0010;
+          if(counter.q[DELAY]==1){
+           if(shift.shift!=8b11111000){
             error = 1;
+            }
           }
-          else {
-            error = 0;
-          }
-
         //last state: All test cases completed
         4b0011:
-          out = 0;
-          error = 0;
-          done = 1;
-          display=8b0011;
-
+         display=8b0011;
+         if(counter.q[DELAY]==1){
+           done=1;
+         }
+          
         default:
           display=8b1111;
-          error = 2;
+          error = 0;
           done = 0;
       }
   }

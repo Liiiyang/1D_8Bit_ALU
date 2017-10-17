@@ -1,3 +1,5 @@
+// shifter contains fault: alufn left and right commands are swapped
+
 module shift8Bit (
     input a[8],
     input b[3], 

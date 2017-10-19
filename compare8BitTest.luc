@@ -1,0 +1,82 @@
+module compare8BitTest (
+    input clk,  // clock
+    input rst,  // reset
+    output error, //To notify Statemachine and Error has occured
+    output done,  //To notify Statemachine testcompare has completed
+    output display[8] //To indicate the led lighting based on alufn testcases.
+  ) {
+  dff counter[30](.clk(clk),.rst(rst)); //A clock of 30 bits wide created to go through all alufn test cases
+  sig test[3];  
+  adder8Bit add;
+  compare8Bit compare;
+  
+  always {
+  done=0;      //done=0 represensts that its incomplete while done=1 represents it has completed
+  error = 0;   //error=0 represents no error, error =1 represents an error has occured
+  add.a=8b0;
+  add.b=8b0;
+  add.alufn=1b1;
+  compare.z=add.z;   //obtaining the necessary z,v,n from adder.
+  compare.v=add.v;
+  compare.n=add.n;
+  compare.alufn=2b0;
+  test=counter.q[28:26];
+  counter.d=counter.q+1;
+    case(test){ //going through alufn testcases
+      3b001:   //test for a=b  lsb=z equal
+        add.a=8b01;
+        add.b=8b01;  // z = 1 , output=8b01
+        compare.alufn=2b01;
+        display=8b001;
+        if(counter.q[25]==1){
+          if(compare.cmp!=8b01){ 
+              error=1;
+            }
+        } 
+        
+      3b010:  //test for a<b lsb=N xor V, lessthan
+        add.a = 8b00000001; 
+        add.b = 8b00000010; //N =1, V=0 
+        compare.alufn = 2b10;
+        display=8b010;
+        if(counter.q[25]==1){
+         if(add.n==0){
+          display=8b111;
+        }
+            if(compare.cmp != 8b01){ //output is 8b01
+              error=1;
+            }
+        } 
+      3b011:  //test for a<=b lsb=Z+(N xor V), lessequal
+        add.a = 8b00000001;
+        add.b = 8b00000010; // N=1, V=0, Z=0
+        compare.alufn = 2b11; 
+        display=8b011;
+        if(counter.q[25]==1){
+            if(compare.cmp != 8b01){ //output is 8b01
+              error=1;
+            }     
+        } 
+      3b100:  //test for a<=b same as above test case but checking for ==
+        add.a = 8b00000001;
+        add.b = 8b00000001; // N=0, V=0, Z=1
+        compare.alufn = 2b11; 
+        display=8b100;
+        if(counter.q[25]==1){
+            if(compare.cmp != 8b01){ //output is 8b01
+              error=1;
+            }               
+        } 
+       3b101:
+          display=8b101;
+          if(counter.q[25]==1){
+              done=1;   //tell statemachine testcase finished
+            }
+        default:
+          display=8b111;
+          done  = 0; 
+          error = 0; 
+    }
+  }
+
+}

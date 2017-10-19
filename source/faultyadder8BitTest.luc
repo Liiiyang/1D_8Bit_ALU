@@ -1,0 +1,139 @@
+// This Tester runs the faultyAdder to demonstrate Error Handling
+module faultyadder8BitTest (
+    input clk,  // clock
+    input rst,  // reset
+    output done, // Used to determine if testing has been completed
+    output error, // Used to output error
+    output display[8]
+
+  ) {
+  
+  dff counter[30](.clk(clk),.rst(rst));
+  const DELAY = 25;
+  sig cases[4]; 
+  
+  // This imports the adder8 module for testing
+  faultyAdder f_add;
+  
+  always {
+ 
+    error = 0;
+    done = 0;
+
+    f_add.a = 8b0; // Initialize input a to be 8 bits
+    f_add.b = 8b0; // Initialize input b to be 8 bits
+    f_add.alufn = 1b1; // Initialize input alufn to be 1 bit
+       
+    cases = counter.q[29:26]; 
+    counter.d = counter.q + 1; // This will increment the last bit of the counter.q by 1 every clk tick, allowing case to change
+    case(cases){
+      4b0000:                                                // 54 + 6 = 60
+        f_add.a = 8b00110110;
+        f_add.b = 8b00000110;
+        f_add.alufn = 1b0;
+        display=8b0000;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b00111100){
+            error = 1;
+          }
+        }
+
+      4b0001:                                               // 4 - 44 = -40
+        f_add.a = 8b00000100;
+        f_add.b = 8b00101100;
+        f_add.alufn = 1b1; // subtract
+        display=8b0001;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b11011000){
+            error = 1;
+          }
+        }
+      4b0010:                                               // -8 + (-52) = -60
+        f_add.a = 8b11111000; 
+        f_add.b = 8b11001100; 
+        f_add.alufn = 1b0;
+        display=8b0010; 
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b11000100){
+           error = 1;
+          }
+        }
+
+      4b0011:                                               // -60 - (-5) = -55
+        f_add.a = 8b11000100;
+        f_add.b = 8b11111011;
+        f_add.alufn = 1b1;
+        display=8b0011;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b11001001){
+           error = 1;
+          }
+        }
+
+      4b0100:                                               // -54 + 60 = 6
+        f_add.a = 8b11001010;
+        f_add.b = 8b00111100;
+        f_add.alufn = 1b0;
+        display=8b0100;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b00000110){
+           error = 1;
+          }
+        }
+
+      4b0101:                                               // 127 + 127 = 254
+        f_add.a = 8b01111111;
+        f_add.b = 8b01111111;
+        f_add.alufn = 1b0;
+        display=8b0101;
+        if(counter.q[DELAY]==1){
+          if(f_add.s!=8b11111110){
+             error = 1;
+          }
+        }
+
+      4b0110:                                               // -1 + (-1) = (-2)
+        f_add.a = 8b11111111;
+        f_add.b = 8b11111111;
+        f_add.alufn = 1b0;
+        display=8b0110;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b11111110){
+           error = 1;
+          }
+        }
+      4b0111:                                               // 0 - 0 = 0
+        f_add.a = 8b00000000;
+        f_add.b = 8b00000000;
+        f_add.alufn = 1b1;
+        display=8b0111;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b00000000){
+           error = 1;
+          }
+        }
+
+      4b1000:                                               // -128 - (-128) = (-256)
+        f_add.a = 8b10000000;
+        f_add.b = 8b10000000;
+        f_add.alufn = 1b1;
+        display=8b1000;
+        if(counter.q[DELAY]==1) {
+          if(f_add.s!=8b00000000){
+           error = 1;
+          }
+        }
+
+      4b1001:
+        display=8b1001;
+        if(counter.q[DELAY]==1){
+              done=1;
+            }   // All test cases completed
+
+      default:
+        display=8b1111;
+        error = 0;
+        done = 0; 
+    }
+  }
+}

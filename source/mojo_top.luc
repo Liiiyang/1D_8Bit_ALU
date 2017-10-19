@@ -32,8 +32,6 @@ module mojo_top (
 }
   alu8Bit alu;
   
-  //adder8BitTest add_test;
- 
   
   always {
     reset_cond.in = ~rst_n; // input raw inverted reset signal
@@ -73,9 +71,10 @@ module mojo_top (
     
     //Statemachine
     statemachine.io_button=io_button[1];
+    statemachine.io_dip = io_dip[2][7];
+    statemachine.io_dip1=io_dip[2][6];
     seg.values = statemachine.io_value; 
     
-    //add_test.modSelect = io_dip[2][6];
     io_led[2] = statemachine.display;
       
   }

@@ -2,6 +2,8 @@ module finitestatemachine (
     input clk,  // clock
     input rst,  // reset
     input io_button,
+    input io_dip,
+    input io_dip1,
     output io_value[4][4],
     output display[8]
 
@@ -13,9 +15,12 @@ module finitestatemachine (
     boolean8BitTest boole_results;
     shift8BitTest shift_results;
     compare8BitTest compare_results;
+    faultyshift8BitTest faulty_results;
+    faultyadder8BitTest faultyadd_results;
+    multiplier8BitTest multiplier_results;
     .rst(rst) {
     
-    fsm state(#INIT(IDLE)) = {IDLE,ADD,BOOLE,SHIFT,COMPARE,DONE};
+    fsm state(#INIT(IDLE)) = {IDLE,ADD,MUL,BOOLE,SHIFT,COMPARE,DONE,FAULTY_SHIFT,FAULTY_ADD};
  
          
     }
@@ -32,7 +37,10 @@ module finitestatemachine (
     add_results.rst = 0;
     boole_results.rst = 0;
     shift_results.rst = 0;
-    compare_results.rst = 0;  
+    compare_results.rst = 0;
+    faulty_results.rst = 0; 
+    faultyadd_results.rst = 0;
+    multiplier_results.rst = 0;
     display = 8h00;
     
     io_value = {4d0,4d0,4d0,4d0}; 
@@ -43,19 +51,36 @@ module finitestatemachine (
       state.IDLE:
         io_value = {4d9,4d13,4d2,4d14};
         // Pressing the Center Button will start the state machine and begin testing
-        if (io_button == 1) {    
-          state.d = state.ADD;
+        if (io_button == 1) { 
+         if(io_dip==1){ 
+            state.d = state.ADD;
+          }
+          else{
+            state.d = state.FAULTY_ADD;
+          }   
           add_results.rst = 1;
+          faultyadd_results.rst = 1;
         }
         
       state.ADD:  
         io_value = {4d10,4d13,4d13,4d0}; // Shows ADD
         display = add_results.display; 
-        if (add_results.error == 1) {
+        if (add_results.error == 1) {    //Runs either the faultyAdder or adder8Bit depending on the switch
           state.d = state.IDLE;
         }
         else if(add_results.done == 1 && add_results.error == 0){
-          boole_results.rst= 1;  
+          multiplier_results.rst= 1;  
+          state.d = state.MUL;
+        }
+        
+      state.MUL:
+        io_value = {4d3,4d3,4d8,4d2}; // Shows NNUL -> MUL 
+        display = multiplier_results.display;
+        if(multiplier_results.error == 1){
+          state.d = state.IDLE;
+        }
+        else if(multiplier_results.done == 1 && multiplier_results.error == 0) {
+          boole_results.rst = 1;        
           state.d = state.BOOLE;
         }
                     
@@ -66,8 +91,14 @@ module finitestatemachine (
           state.d = state.IDLE;
         }
         else if(boole_results.done == 1 && boole_results.error == 0) {
-          shift_results.rst = 1;    
-          state.d = state.SHIFT;
+          shift_results.rst = 1; 
+          faulty_results.rst = 1;  
+          if(io_dip1==1){               //Runs either the faultyShifter or shift8Bit depending on the switch
+            state.d = state.SHIFT;
+          }
+          else{
+            state.d = state.FAULTY_SHIFT;
+          }
         }
 
       state.SHIFT:
@@ -95,6 +126,26 @@ module finitestatemachine (
         if (io_button == 1) {
           state.d = state.IDLE;
         }
+        
+        
+      // This parts runs the faultyAdder and faultyShifter to demonstrate Error Handling
+      state.FAULTY_SHIFT:
+        io_value = {4d15,4d7,4d1,4d15}; // Shows FSHF
+        if(faulty_results.error == 1){
+          state.d = state.IDLE;
+        }
+        else if(faulty_results.done == 1 && faulty_results.error == 0) {  
+          state.d = state.DONE;
+        }
+      state.FAULTY_ADD:
+        io_value = {4d15,4d10,4d13,4d13}; // Shows FADD
+        if(faultyadd_results.error == 1){
+          state.d = state.IDLE;
+        }
+        else if(faultyadd_results.done == 1 && faultyadd_results.error == 0) {  
+          state.d = state.DONE;
+        }
+        
        
   }
 }

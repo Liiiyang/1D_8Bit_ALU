@@ -20,13 +20,24 @@ module multiplier8BitTest (
     multiply.a = 8b0; // initialise input a to multiply to be 8bits 
     multiply.b = 8b0; //nitialise input b to multiply to be 8bits  
     cases = counter.q[27:26];
-    multiply.alufn = 1b1;
+    multiply.alufn = 1b0;
     counter.d = counter.q+1;
     
     case(cases){
+      2b00: //DIVISION test case 1: 4/2 = 2
+        multiply.a = 8b100;
+        multiply.b= 8b10;
+        multiply.alufn = 1b1;
+        display = 8b01;
+        if (counter.q[DELAY] == 1){
+          if(multiply.mul != 8b010){
+            error = 1; // go to error state
+          }
+        }
       2b01: //normal multiplication test case 1: 3*2 = 6
         multiply.a = 8b11;
         multiply.b= 8b10;
+        multiply.alufn = 1b0;
         display = 8b01;
         if (counter.q[DELAY] == 1){
           if(multiply.mul != 8b110){
@@ -37,12 +48,18 @@ module multiplier8BitTest (
       2b10: // negative multiplication  test case 2 : -3*-3 = 9
         multiply.a = 8b11111101;
         multiply.b = 8b11111101;
+        multiply.alufn = 1b0;
         display = 8b10;
         if(counter.q[DELAY]==1){
           if(multiply.mul != 8b1001){
             error=1; // go to error state
           }
         }
+      2b11: // negative multiplication  test case 2 : -3*-3 = 9
+        display = 8b11;
+        if(counter.q[DELAY]==1){
+            done=1;
+          }
       default:
         display=8b1111;
         error = 0;

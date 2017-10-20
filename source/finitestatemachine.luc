@@ -70,7 +70,7 @@ module finitestatemachine (
         }
         else if(add_results.done == 1 && add_results.error == 0){
           multiplier_results.rst= 1;  
-          state.d = state.MUL;
+          state.d = state.MUL;//mul
         }
         
       state.MUL:

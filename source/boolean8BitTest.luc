@@ -32,7 +32,7 @@ module boolean8BitTest (
           
         case(cases){
       	    4b1000: //test case for and operation
-          io_led[0] = 8b1000;
+          //io_led[0] = 8b1000;
           	boole.a = 8b01001001;
           	boole.b = 8b01111101;
           display=8b1000;
@@ -45,7 +45,7 @@ module boolean8BitTest (
          
            4b1110: //test case for or operation
            display=8b1110;
-           io_led[0] = 8b1110;
+           //io_led[0] = 8b1110;
            boole.a = 8b10001000;
            boole.b = 8b01001001;
            if(counter.q[DELAY]==1){
@@ -57,7 +57,7 @@ module boolean8BitTest (
       
            4b0110: //test case for xor operation
           display=8b0110; 
-          io_led[0] = 8b0110;
+          //io_led[0] = 8b0110;
           	boole.a = 8b10110101;
           	boole.b = 8b10111101;
             if(counter.q[DELAY]==1){
@@ -78,7 +78,7 @@ module boolean8BitTest (
              }
         	   4b1100: //test case for 'B' operation
             display=8b1100; 
-            io_led[0] = 8b1100;
+            //io_led[0] = 8b1100;
         		  boole.a = 8b01010010;
         		  boole.b = 8b10100101;
               if(counter.q[DELAY]==1){
@@ -89,7 +89,7 @@ module boolean8BitTest (
               }
         	    4b0101: //test case for 'Not A' operation
               display=8b0101;
-              io_led[0] = 8b0101;
+              //io_led[0] = 8b0101;
         		   boole.a = 8b11010111;
         		   boole.b = 8b01111101;
                if(counter.q[DELAY]==1){
@@ -100,7 +100,7 @@ module boolean8BitTest (
                }
         	    4b0011: //test case for 'Not B' operation
              display=8b0011;
-             io_led[0] = 8b0011;
+             //io_led[0] = 8b0011;
         		   boole.a = 8b00110111;
         		   boole.b = 8b01101010;
                if(counter.q[DELAY]==1){
@@ -111,7 +111,7 @@ module boolean8BitTest (
 
         	    4b0111: //test case for NAND gate operation
               display=8b0111;
-              io_led[0] = 8b0111;
+              //io_led[0] = 8b0111;
         		   boole.a = 8b11111010;
         		   boole.b = 8b11011010;   
               if(counter.q[DELAY]==1){
@@ -122,7 +122,7 @@ module boolean8BitTest (
               }
         	    4b0001: //test case for NOR gate
               display=8b0001;
-              io_led[0] = 8b0001;
+              //io_led[0] = 8b0001;
         		   boole.a = 8b11110001;
         		   boole.b = 8b00001001;
                if(counter.q[DELAY]==1){
@@ -133,7 +133,7 @@ module boolean8BitTest (
               }
         	     4b1001: //test case for XNOR gate
               display=8b1001; 
-              io_led[0] = 8b1001;
+              //io_led[0] = 8b1001;
         		    boole.a = 8b01101101;
         		    boole.b = 8b01100011;
                if(counter.q[DELAY]==1){

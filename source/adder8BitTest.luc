@@ -1,7 +1,6 @@
 module adder8BitTest (
     input clk,  // clock
     input rst,  // reset
-    //input modSelect, // Select normal adder module or faulty adder module
     output done, // Used to determine if testing has been completed
     output error, // Used to output error
     output display[8]
@@ -10,7 +9,7 @@ module adder8BitTest (
   
   dff counter[30](.clk(clk),.rst(rst));
   const DELAY = 25;
-  sig cases[4]; // Initialises signal cases to only take up to 4 bits, i.e. have 16 test cases
+  sig cases[4]; 
   
   // This imports the adder8 module for testing
   adder8Bit add;
@@ -20,9 +19,9 @@ module adder8BitTest (
     error = 0;
     done = 0;
 
-    add.a = 8b0; // Initialising input a to adder to be 8 bits
-    add.b = 8b0; // Initialising input b to adder to be 8 bits
-    add.alufn = 1b1; // Initialising input alufn to adder to be 1 bit
+    add.a = 8b0; // Initialize input a to be 8 bits
+    add.b = 8b0; // Initialize input b to be 8 bits
+    add.alufn = 1b1; // Initialize input alufn to be 1 bit
        
     cases = counter.q[29:26]; 
     counter.d = counter.q + 1; // This will increment the last bit of the counter.q by 1 every clk tick, allowing case to change
